@@ -1,5 +1,23 @@
 from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+from .views import (
+    ProfileViewSet, CampaignViewSet, NegotiationViewSet,
+    AnalyticsViewSet, ReviewViewSet, PortfolioViewSet, ProjectViewSet
+)
+
+router = DefaultRouter()
+router.register(r'profile', ProfileViewSet)
+router.register(r'campaigns', CampaignViewSet)
+router.register(r'negotiations', NegotiationViewSet)
+router.register(r'analytics', AnalyticsViewSet)
+router.register(r'reviews', ReviewViewSet)
+router.register(r'portfolio', PortfolioViewSet)
+router.register(r'projects', ProjectViewSet)
 
 urlpatterns = [
-    # path('auth/', include('authentication.urls'))
+    path('', include(router.urls)),
+    path('recommendations/',
+        ProfileViewSet.as_view({'get': 'recommendations'}),
+        name='recommendations'
+        ),
 ]
