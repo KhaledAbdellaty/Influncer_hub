@@ -83,6 +83,7 @@ class InfluencerListSerializer(serializers.ModelSerializer):
         model = User
         fields = ['id', 'username', 'email', 'niche', 'profile']
 
+
 class SearchSerializer(serializers.Serializer):
     """
     Defines the structure for search and filter parameters,
@@ -94,6 +95,10 @@ class SearchSerializer(serializers.Serializer):
     min_engagement = serializers.FloatField(required=False)
     max_engagement = serializers.FloatField(required=False)
     ordering = serializers.ChoiceField(
-        choices=['followers_count', '-followers_count', 'engagement_rate', '-engagement_rate'],
+        choices=[
+            'followers_count',
+            '-followers_count',
+            'engagement_rate',
+            '-engagement_rate'],
         required=False
     )

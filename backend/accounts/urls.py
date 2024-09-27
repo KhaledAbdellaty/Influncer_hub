@@ -1,5 +1,10 @@
+#!/usr/bin/env python3
+"""
+Endpoints accounts URL
+"""
 from django.urls import path
 from .views import UserRegistrationView, UserLoginView, UserLogoutView
+
 
 urlpatterns = [
     path('register/', UserRegistrationView.as_view()),

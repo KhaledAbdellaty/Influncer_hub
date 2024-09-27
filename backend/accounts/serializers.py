@@ -8,8 +8,8 @@ from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
 from .models import Profile
 
-
 User = get_user_model()
+
 
 class ProfileSerializer(serializers.ModelSerializer):
     """
@@ -19,7 +19,7 @@ class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
         fields = '__all__'
-        read_only_fields = ['id']
+        read_only_fields = ['id', "user"]
 
     def update(self, instance, validated_data):
         data = super().update(instance, validated_data)
@@ -34,10 +34,17 @@ class UserSerializer(serializers.ModelSerializer):
     role, profile and niche.
     """
     profile = ProfileSerializer(read_only=True)
+
     class Meta:
         model = User
         fields = '__all__'
-        read_only_fields = ['id']
+        read_only_fields = [
+            'id',
+            "email",
+            "username",
+            "date_joined",
+            "role"
+            ]
 
     def get_fields(self):
         fields = super().get_fields()
@@ -54,16 +61,26 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
     """
     Define the structure for registration parameters.
     """
-    password = serializers.CharField(write_only=True, required=True, validators=[validate_password])
-    password2 = serializers.CharField(write_only=True, required=True)
+    password = serializers.CharField(
+        write_only=True, required=True,
+        validators=[validate_password]
+        )
+    password2 = serializers.CharField(
+        write_only=True, required=True
+        )
 
     class Meta:
         model = User
-        fields = ('username', 'email', 'password', 'password2', 'role', 'niche')
+        fields = (
+            'username', 'email', 'password',
+            'password2', 'role', 'niche'
+            )
 
     def validate(self, attrs):
         if attrs['password'] != attrs['password2']:
-            raise serializers.ValidationError({"password": "Password fields didn't match."})
+            raise serializers.ValidationError(
+                {"password": "Password fields didn't match."}
+                )
         return attrs
 
     def create(self, validated_data):

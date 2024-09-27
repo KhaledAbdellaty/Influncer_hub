@@ -1,16 +1,19 @@
+#!/usr/bin/env python3
 from django.db import models
 from django.db.models.signals import post_save
 from django.contrib.auth.models import AbstractUser
+"""
+Database models
+"""
 
-# Create your models here.
 
 class User(AbstractUser):
     """
     A User class that inhert from AbstractUser to
     override the default user attributes, and
-    logging by email field. 
+    logging by email field.
     """
-    # Override the default logging to be by email field 
+    # Override the default logging to be by email field
     ROLE_CHOICES = (
         ('BRAND', 'Brand'),
         ('INFLUENCER', 'Influencer'),
@@ -22,9 +25,14 @@ class User(AbstractUser):
     USERNAME_FIELD = "email"
 
     def __str__(self):
+        """Return the username as reference to the object"""
         return self.username
 
+
 class Profile(models.Model):
+    """
+    A Profile class that store in the database.
+    """
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     bio = models.TextField(blank=True)
     social_links = models.JSONField(default=dict)
@@ -32,6 +40,7 @@ class Profile(models.Model):
     engagement_rate = models.FloatField(default=0.0)
 
     def __str__(self):
+        """Return the username as reference to the object"""
         return f"{self.user.username}'s Profile"
 
 
@@ -39,8 +48,10 @@ def create_user_profile(sender, instance, created, **kwargs):
     if created:
         Profile.objects.create(user=instance)
 
+
 def save_user_profile(sender, instance, **kwargs):
     instance.profile.save()
+
 
 post_save.connect(create_user_profile, sender=User)
 post_save.connect(save_user_profile, sender=User)

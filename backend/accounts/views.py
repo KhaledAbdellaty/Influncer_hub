@@ -16,6 +16,10 @@ from .serializers import (
 
 
 class UserRegistrationView(generics.CreateAPIView):
+    """
+    API view for user registration.
+    Concrete view for creating a model instance.
+    """
     serializer_class = UserRegistrationSerializer
     permission_classes = [permissions.AllowAny]
 
@@ -33,9 +37,13 @@ class UserRegistrationView(generics.CreateAPIView):
 
 
 class UserLoginView(generics.CreateAPIView):
+    """
+    API view for user login.
+    Concrete view for creating a model instance.
+    """
     serializer_class = UserLoginSerializer
     permission_classes = [permissions.AllowAny]
-    
+
     def post(self, request):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
@@ -47,7 +55,8 @@ class UserLoginView(generics.CreateAPIView):
                 refresh = RefreshToken.for_user(user)
                 user_serializer = UserSerializer(user)
                 user_data = user_serializer.data
-                cache.set('access', str(refresh.access_token), timeout=(60 * 180))
+                cache.set('access', str(refresh.access_token),
+                          timeout=(60 * 180))
                 cache.set('refresh', str(refresh), timeout=(864000))
                 cache.set('pk', str(user.pk))
                 return Response({
@@ -64,6 +73,10 @@ class UserLoginView(generics.CreateAPIView):
 
 
 class UserLogoutView(APIView):
+    """
+    API view for user logout.
+    Concrete view for send POST method
+    """
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request):
