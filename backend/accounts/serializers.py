@@ -19,7 +19,7 @@ class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
         fields = '__all__'
-        read_only_fields = ['id']
+        read_only_fields = ['id', "user"]
 
     def update(self, instance, validated_data):
         data = super().update(instance, validated_data)
@@ -38,7 +38,13 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = '__all__'
-        read_only_fields = ['id']
+        read_only_fields = [
+            'id',
+            "email",
+            "username",
+            "date_joined",
+            "role"
+            ]
 
     def get_fields(self):
         fields = super().get_fields()

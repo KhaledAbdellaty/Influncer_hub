@@ -31,6 +31,15 @@ from .serializers import (
 User = get_user_model()
 
 
+class UserViewSet(viewsets.ModelViewSet):
+    """
+    The User view that updates user fields.
+    """
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    http_method_names = ['get', 'put', 'patch', 'head', 'options']
+
 class ProfileViewSet(viewsets.ModelViewSet):
     """
     The Profile view that handles CRUD operations.
