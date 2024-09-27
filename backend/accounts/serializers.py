@@ -1,3 +1,8 @@
+#!/usr/bin/env python3
+"""
+Serializer that convert object
+to JSON and vice versa.
+"""
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
@@ -7,6 +12,10 @@ from .models import Profile
 User = get_user_model()
 
 class ProfileSerializer(serializers.ModelSerializer):
+    """
+    Serializes the Profile model,
+    including the associated user data.
+    """
     class Meta:
         model = Profile
         fields = '__all__'
@@ -19,6 +28,11 @@ class ProfileSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
+    """
+    Serializes the User model,
+    including fields like id, username, email,
+    role, profile and niche.
+    """
     profile = ProfileSerializer(read_only=True)
     class Meta:
         model = User
@@ -37,6 +51,9 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
+    """
+    Define the structure for registration parameters.
+    """
     password = serializers.CharField(write_only=True, required=True, validators=[validate_password])
     password2 = serializers.CharField(write_only=True, required=True)
 
@@ -56,5 +73,8 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 
 
 class UserLoginSerializer(serializers.Serializer):
+    """
+    Define the structure for login parameters.
+    """
     email = serializers.CharField(required=True)
     password = serializers.CharField(required=True, write_only=True)

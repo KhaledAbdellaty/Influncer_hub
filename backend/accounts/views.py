@@ -3,6 +3,7 @@
 view module
 """
 from django.contrib.auth import authenticate
+from django.core.cache import cache
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -34,7 +35,7 @@ class UserRegistrationView(generics.CreateAPIView):
 class UserLoginView(generics.CreateAPIView):
     serializer_class = UserLoginSerializer
     permission_classes = [permissions.AllowAny]
-
+    
     def post(self, request):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
@@ -46,6 +47,9 @@ class UserLoginView(generics.CreateAPIView):
                 refresh = RefreshToken.for_user(user)
                 user_serializer = UserSerializer(user)
                 user_data = user_serializer.data
+                cache.set('access', str(refresh.access_token), timeout=(60 * 180))
+                cache.set('refresh', str(refresh), timeout=(864000))
+                cache.set('pk', str(user.pk))
                 return Response({
                     "refresh": str(refresh),
                     "access": str(refresh.access_token),
@@ -61,11 +65,13 @@ class UserLoginView(generics.CreateAPIView):
 
 class UserLogoutView(APIView):
     permission_classes = [permissions.IsAuthenticated]
+
     def post(self, request):
         try:
-            access = request.data.get('refresh')
-            token = RefreshToken(access)
+            refresh = cache.get('refresh')
+            token = RefreshToken(refresh)
             token.blacklist()
+            cache.delete_many(['access', 'refresh'])
             return Response(status=status.HTTP_205_RESET_CONTENT)
         except Exception as e:
             return Response(status=status.HTTP_400_BAD_REQUEST)

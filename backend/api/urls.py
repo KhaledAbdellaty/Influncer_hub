@@ -1,9 +1,11 @@
+#!/usr/bin/env python3
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from .views import (
     ProfileViewSet, CampaignViewSet, NegotiationViewSet,
-    AnalyticsViewSet, ReviewViewSet, PortfolioViewSet, ProjectViewSet
-)
+    AnalyticsViewSet, ReviewViewSet, PortfolioViewSet,
+    ProjectViewSet, InfluencerDetailView, InfluencerSearchView
+    )
 
 router = DefaultRouter()
 router.register(r'profile', ProfileViewSet)
@@ -20,4 +22,8 @@ urlpatterns = [
         ProfileViewSet.as_view({'get': 'recommendations'}),
         name='recommendations'
         ),
+    path('influencers/search/', InfluencerSearchView.as_view(),
+        name='influencer-search'),
+    path('influencers/<int:pk>/', InfluencerDetailView.as_view(),
+        name='influencer-detail'),
 ]
